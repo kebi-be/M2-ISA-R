@@ -51,6 +51,9 @@ def number_literal(self: behav.IntLiteral, context):
 def int_literal(self: behav.IntLiteral, context):
 	return arch.FunctionThrows.NO
 
+def string_literal(self: behav.StringLiteral, context):
+	return arch.FunctionThrows.NO
+
 def scalar_definition(self: behav.ScalarDefinition, context):
 	return arch.FunctionThrows.NO
 
@@ -114,6 +117,13 @@ def type_conv(self: behav.TypeConv, context):
 	return expr
 
 def callable_(self: behav.Callable, context):
+	args = [arg.generate(context) for arg in self.args]
+	args.append(self.ref_or_name.throws)
+
+	return reduce(or_, args)
+
+
+def procedure_call(self: behav.ProcedureCall, context):
 	args = [arg.generate(context) for arg in self.args]
 	args.append(self.ref_or_name.throws)
 

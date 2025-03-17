@@ -42,10 +42,13 @@ def concat_operation(self: behav.ConcatOperation, context):
 
 	return all([left, right])
 
-def number_literal(self: behav.IntLiteral, context):
+def number_literal(self: behav.NumberLiteral, context):
 	return True
 
 def int_literal(self: behav.IntLiteral, context):
+	return True
+
+def string_literal(self: behav.StringLiteral, context):
 	return True
 
 def scalar_definition(self: behav.ScalarDefinition, context):

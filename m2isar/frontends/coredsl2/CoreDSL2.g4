@@ -19,14 +19,14 @@ import_file
 	;
 
 isa
-	: 'InstructionSet' name=IDENTIFIER ('extends' extension+=IDENTIFIER (',' extension+=IDENTIFIER)*)? '{' sections+=section+ '}' # instruction_set
+	: 'InstructionSet' name=IDENTIFIER ('extends' extension+=IDENTIFIER (',' extension+=IDENTIFIER)*)? '{' sections+=section* '}' # instruction_set
 	| 'Core' name=IDENTIFIER ('provides' contributing_types+=IDENTIFIER (',' contributing_types+=IDENTIFIER)*)? '{' sections+=section* '}' # core_def
 	;
 
 section
 	: type_='architectural_state' '{' (declarations+=declaration | expressions+=expression ';')+ '}' # section_arch_state
 	| type_='functions' '{' functions+=function_definition+ '}' # section_functions
-	| type_='instructions' attributes+=attribute* '{' instructions+=instruction+ '}' # section_instructions
+	| type_='instructions' attributes+=attribute* '{' instructions+=instruction* '}' # section_instructions
 	| type_='always' attributes+=attribute* '{' always_blocks+=always_block+ '}' # section_always
 	;
 
@@ -36,7 +36,7 @@ always_block
 instruction
 	: name=IDENTIFIER attributes+=attribute* '{'
 	'encoding' ':' encoding+=encoding_entry ('::' encoding+=encoding_entry)*';'
-	(('args_disass' | 'assembly') ':' disass=STRING ';')?
+	('assembly' ':' (assembly=STRING | '{' mnemonic=STRING ',' assembly=STRING '}') ';')?
 	'behavior' ':' behavior=statement
 	'}'
 	;
@@ -233,6 +233,7 @@ constant
 	: integer_constant
 	| floating_constant
 	| character_constant
+	| string_constant
 	| bool_constant
 	;
 
@@ -250,6 +251,10 @@ bool_constant
 
 character_constant
 	: value=CHARCONST
+	;
+
+string_constant
+	: value=STRING
 	;
 
 double_left_bracket
